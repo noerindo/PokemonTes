@@ -50,6 +50,8 @@ final class LoginViewModel {
             let realm = try Realm()
             if let user = realm.objects(UserModel.self).filter("email == %@", email).first {
                 if user.password == password {
+                    UserDefaults.standard.set(true, forKey: "isLoggedIn")
+                    
                     successMessage.accept("Login berhasil!")
                     loginSuccess.accept(())
                 } else {

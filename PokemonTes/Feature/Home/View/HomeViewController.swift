@@ -71,6 +71,8 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.navigationItem.hidesBackButton = true
         configObservable()
         setupViews()
         setupLayout()
@@ -236,7 +238,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.bounds.width
         if indexPath.item == pokemons.count {
-            return CGSize(width: width, height: 60) // Ukuran tombol
+            return CGSize(width: width, height: 60)
         }
         return isGrid ? CGSize(width: (width / 2) - 8, height: 150)
         : CGSize(width: width, height: 110)

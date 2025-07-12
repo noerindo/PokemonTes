@@ -149,8 +149,17 @@ class CardPokemonCell: UICollectionViewCell {
         rootStack.addArrangedSubview(numberLabel)
         rootStack.addArrangedSubview(nameLabel)
         
+        numberLabel.snp.makeConstraints { make in
+            make.height.greaterThanOrEqualTo(10)
+        }
+        
+        nameLabel.snp.makeConstraints { make in
+            make.height.greaterThanOrEqualTo(20)
+        }
+        
         pokemonImage.snp.makeConstraints { make in
             make.width.height.equalTo(100)
+            make.top.equalTo(rootStack).offset(-30)
         }
     }
     

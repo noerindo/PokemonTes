@@ -50,36 +50,6 @@
             endingLineNumber = "152"
             landmarkName = "bindViewModel()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "C07DF2CD-78A7-4A5B-9346-13B50CEB921D - c8227eff92c2c89e"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "PokemonTes.RegisViewController.bindViewModel() -&gt; ()"
-                  moduleName = "PokemonTes.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/phincon/Desktop/PokemonTes/PokemonTes/Feature/Login/View/RegisViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "152"
-                  endingLineNumber = "152">
-               </Location>
-               <Location
-                  uuid = "C07DF2CD-78A7-4A5B-9346-13B50CEB921D - 2df0ce2a8ecc16d5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (Swift.String) -&gt; () in PokemonTes.RegisViewController.bindViewModel() -&gt; ()"
-                  moduleName = "PokemonTes.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/phincon/Desktop/PokemonTes/PokemonTes/Feature/Login/View/RegisViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "152"
-                  endingLineNumber = "152">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
