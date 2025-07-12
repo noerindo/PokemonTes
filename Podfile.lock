@@ -1,0 +1,65 @@
+PODS:
+  - Alamofire (5.10.2)
+  - Kingfisher (7.12.0)
+  - MBProgressHUD (1.2.0)
+  - Realm (10.54.5):
+    - Realm/Headers (= 10.54.5)
+  - Realm/Headers (10.54.5)
+  - RealmSwift (10.54.5):
+    - Realm (= 10.54.5)
+  - RxCocoa (6.5.0):
+    - RxRelay (= 6.5.0)
+    - RxSwift (= 6.5.0)
+  - RxRelay (6.5.0):
+    - RxSwift (= 6.5.0)
+  - RxSwift (6.5.0)
+  - SkeletonView (1.30.4)
+  - SnackBar.swift (0.1.0):
+    - SnapKit
+  - SnapKit (5.0.1)
+  - XLPagerTabStrip (9.1.0)
+
+DEPENDENCIES:
+  - Alamofire (~> 5.8)
+  - Kingfisher (~> 7.0)
+  - MBProgressHUD
+  - RealmSwift (~> 10)
+  - RxCocoa (= 6.5.0)
+  - RxSwift (= 6.5.0)
+  - SkeletonView
+  - SnackBar.swift
+  - SnapKit (~> 5.0.0)
+  - XLPagerTabStrip (~> 9.0)
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - Alamofire
+    - Kingfisher
+    - MBProgressHUD
+    - Realm
+    - RealmSwift
+    - RxCocoa
+    - RxRelay
+    - RxSwift
+    - SkeletonView
+    - SnackBar.swift
+    - SnapKit
+    - XLPagerTabStrip
+
+SPEC CHECKSUMS:
+  Alamofire: 7193b3b92c74a07f85569e1a6c4f4237291e7496
+  Kingfisher: 53a10ea35051a436b5fb626ca2dd8f3144d755e9
+  MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
+  Realm: ac6ab7d43b76db2bdb48bbd097019bb621d860b8
+  RealmSwift: 7c258367cc498594aa989b7d9620989a276ad7f4
+  RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
+  RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
+  RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
+  SkeletonView: 5a050f6411e697abd4cda0a8d767013399dccd69
+  SnackBar.swift: 79ea4df13ea9e6633137dd6acbd490534d26440d
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
+  XLPagerTabStrip: 27f3bfe23c53b4251c6481b06b1c289458a3fc1d
+
+PODFILE CHECKSUM: c2abf69992e84698c68baaba05016b73afbac141
+
+COCOAPODS: 1.16.2

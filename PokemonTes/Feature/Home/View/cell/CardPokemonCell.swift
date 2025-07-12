@@ -6,7 +6,182 @@
 //
 
 import UIKit
+import SnapKit
+import SkeletonView
+import Kingfisher
 
 class CardPokemonCell: UICollectionViewCell {
     
+    enum DisplayMode {
+        case grid
+        case list
+    }
+    
+    private let blurBackgroundView: UIVisualEffectView = {
+        let blurEffect = UIBlurEffect(style: .light)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.alpha = 0.5
+        blurView.layer.cornerRadius = 12
+        blurView.clipsToBounds = true
+        return blurView
+    }()
+    
+    private let containerView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 12
+        view.clipsToBounds = false
+        return view
+    }()
+    
+    private let rootStack: UIStackView = {
+        let stack = UIStackView()
+        stack.isSkeletonable = true
+        stack.spacing = 12
+        return stack
+    }()
+    
+    private let numberLabel: UILabel = {
+        let label = UILabel()
+        label.isSkeletonable = true
+        label.textColor = .black
+        label.font = UIFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)
+        return label
+    }()
+    
+    private let nameLabel: UILabel = {
+        let label = UILabel()
+        label.isSkeletonable = true
+        label.textColor = .black
+        label.font = UIFont.boldSystemFont(ofSize: 16)
+        return label
+    }()
+    
+    private let typeStack: UIStackView = {
+        let stack = UIStackView()
+        stack.isSkeletonable = true
+        stack.axis = .horizontal
+        return stack
+    }()
+    
+    private let pokemonImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.isSkeletonable = true
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+    
+    private var currentMode: DisplayMode = .list
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        isSkeletonable = true
+        contentView.isSkeletonable = true
+        setupStyle()
+        setupLayout()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupStyle()
+        setupLayout()
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        pokemonImage.kf.cancelDownloadTask()
+        pokemonImage.image = nil
+        numberLabel.text = nil
+        nameLabel.text = nil
+        typeStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        rootStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+    }
+    
+    private func setupStyle() {
+        contentView.clipsToBounds = false
+        layer.cornerRadius = 12
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.15
+        layer.shadowOffset = CGSize(width: 0, height: 4)
+        layer.shadowRadius = 6
+        layer.masksToBounds = false
+    }
+    
+    private func setupLayout() {
+        contentView.addSubview(containerView)
+        containerView.addSubview(blurBackgroundView)
+        containerView.addSubview(rootStack)
+        
+        containerView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        blurBackgroundView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        rootStack.snp.makeConstraints {
+            $0.top.leading.trailing.equalToSuperview().inset(12)
+            $0.bottom.lessThanOrEqualToSuperview().inset(12)
+        }
+    }
+    
+    func configure(id: Int, name: String, types: [Types], mode: DisplayMode) {
+        let typesPokemon = types.compactMap { $0.type.name }
+        currentMode = mode
+        numberLabel.text = String(format: "#%03d", id)
+        nameLabel.text = name.capitalized
+        pokemonImage.kf.setImage(with: PokemonUtils.getPokemonImageURL(from: id))
+        
+        let typeName = types.first?.type.name ?? "normal"
+        blurBackgroundView.backgroundColor = UIColor.backgroundColorForType(typeName, isBlur: true)
+        
+        switch mode {
+        case .grid:
+            configureGrid()
+        case .list:
+            configureList(types: typesPokemon)
+        }
+    }
+    
+    private func configureGrid() {
+        rootStack.axis = .vertical
+        rootStack.alignment = .center
+        
+        nameLabel.textAlignment = .center
+        nameLabel.numberOfLines = 0
+        
+        rootStack.addArrangedSubview(pokemonImage)
+        rootStack.addArrangedSubview(numberLabel)
+        rootStack.addArrangedSubview(nameLabel)
+        
+        pokemonImage.snp.makeConstraints { make in
+            make.width.height.equalTo(100)
+        }
+    }
+    
+    private func configureList(types: [String]) {
+        rootStack.axis = .horizontal
+        rootStack.alignment = .center
+        rootStack.distribution = .fillProportionally
+        
+        typeStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        for type in types {
+            let label = UILabel()
+            label.text = "  \(type.capitalized)  "
+            label.font = UIFont.systemFont(ofSize: 12, weight: .bold)
+            label.textColor = .white
+            label.backgroundColor = UIColor.backgroundColorForType(type)
+            label.layer.cornerRadius = 10
+            label.clipsToBounds = true
+            typeStack.addArrangedSubview(label)
+        }
+        
+        let infoStack = UIStackView(arrangedSubviews: [numberLabel, nameLabel, typeStack])
+        infoStack.axis = .vertical
+        infoStack.spacing = 4
+        infoStack.alignment = .leading
+        
+        rootStack.addArrangedSubview(infoStack)
+        rootStack.addArrangedSubview(pokemonImage)
+        
+        pokemonImage.snp.makeConstraints { make in
+            make.width.height.equalTo(120)
+        }
+    }
 }
+

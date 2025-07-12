@@ -1,0 +1,46 @@
+//
+//  extension.swift
+//  PokemonTes
+//
+//  Created by Phincon on 12/07/25.
+//
+
+import UIKit
+
+extension UITextField {
+    
+    func enablePasswordToggle() {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "eye.slash"), for: .normal)
+        button.tintColor = .gray
+        button.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+        
+        button.addTarget(self, action: #selector(togglePasswordView), for: .touchUpInside)
+        self.rightView = button
+        self.rightViewMode = .always
+    }
+    
+    @objc private func togglePasswordView(_ sender: UIButton) {
+        self.isSecureTextEntry.toggle()
+        
+        let imageName = self.isSecureTextEntry ? "eye.slash" : "eye"
+        sender.setImage(UIImage(systemName: imageName), for: .normal)
+        
+        let currentText = self.text
+        self.text = nil
+        self.text = currentText
+    }
+}
+
+extension UIColor {
+    static func backgroundColorForType(_ type: String, isBlur: Bool = false) -> UIColor {
+        switch type.lowercased() {
+        case "water": return .systemBlue.withAlphaComponent(isBlur ? 0.3 : 1)
+        case "ice": return .systemTeal.withAlphaComponent(isBlur ? 0.3 : 1)
+        case "fire": return .systemRed.withAlphaComponent(isBlur ? 0.3 : 1)
+        case "grass": return .systemGreen.withAlphaComponent(isBlur ? 0.3 : 1)
+        case "electric": return .systemYellow.withAlphaComponent(isBlur ? 0.3 : 1)
+        default: return .gray.withAlphaComponent(isBlur ? 0.3 : 1)
+        }
+    }
+}
