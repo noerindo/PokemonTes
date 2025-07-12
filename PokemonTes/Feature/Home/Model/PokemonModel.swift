@@ -68,12 +68,12 @@ struct DetailPokemonModel: Codable, ObjectData {
 
 struct Abilitys: Codable {
     let ability: Pokemon
-    let ishidden: Bool
+    let is_hidden: Bool
     let slot: Int
     
     init(_ dict:  [String: Any]) {
         self.ability = Pokemon(dict["ability"] as? [String: Any] ?? [:])
-        self.ishidden = dict["is_hidden"] as? Bool ?? false
+        self.is_hidden = dict["is_hidden"] as? Bool ?? false
         self.slot = dict["slot"] as? Int ?? 0
         
     }
