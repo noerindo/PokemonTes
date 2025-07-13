@@ -45,6 +45,8 @@ class DetailTabViewController: UIViewController {
     }
     
     private func setupViews() {
+        stackView.layoutMargins = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+        stackView.spacing = 10
         
         view.addSubview(pokemonImage)
         view.addSubview(stackView)
@@ -70,9 +72,12 @@ class DetailTabViewController: UIViewController {
                 let abilityName = ability.ability.name?.capitalized
                 let label = PokemonUtils.createTypeLabel(
                     text: "\(abilityName?.capitalized ?? "Pokédex")",
-                    bgColor: ability.is_hidden ? .lightGray : .systemRed, width: 120, height: 50
+                    bgColor: ability.is_hidden ? .lightGray : .systemRed, height: 50
                 )
                 stackView.addArrangedSubview(label)
+                label.snp.makeConstraints {
+                    $0.leading.trailing.equalTo(stackView).inset(0)
+                }
             }
         case .baseXP(let xp):
             let label = UILabel()
@@ -86,9 +91,12 @@ class DetailTabViewController: UIViewController {
                 let typeName = type.type.name
                 let label = PokemonUtils.createTypeLabel(
                     text: "\(typeName?.capitalized ?? "Pokédex")",
-                    bgColor: UIColor.backgroundColorForType(typeName ?? "normal"), width: 120, height: 50
+                    bgColor: UIColor.backgroundColorForType(typeName ?? "normal"), height: 50
                 )
                 stackView.addArrangedSubview(label)
+                label.snp.makeConstraints {
+                    $0.leading.trailing.equalTo(stackView).inset(0)
+                }
             }
         }
     }

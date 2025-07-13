@@ -18,7 +18,7 @@ struct PokemonUtils {
         return URL(string: isGif ? "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/\(id).gif" : "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/\(id).png")
     }
     
-    static func createTypeLabel(text: String, bgColor: UIColor, width: CGFloat, height: CGFloat = 24) -> UILabel {
+    static func createTypeLabel(text: String, bgColor: UIColor, height: CGFloat = 24) -> UILabel {
         let label = UILabel()
         label.text = text
         label.font = .systemFont(ofSize:  height == 24 ? 12 : 20, weight: .medium)
@@ -32,7 +32,7 @@ struct PokemonUtils {
         
         label.snp.makeConstraints { make in
             make.height.equalTo(height)
-            make.width.greaterThanOrEqualTo(width)
+            make.width.greaterThanOrEqualTo(60)
         }
         
         return label

@@ -211,7 +211,7 @@ class DetailViewController: ButtonBarPagerTabStripViewController, UICollectionVi
         for type in data.types {
             let label = PokemonUtils.createTypeLabel(
                 text: "\(type.type.name?.capitalized ?? "Pokédex")",
-                bgColor: UIColor.backgroundColorForType(type.type.name ?? "normal"), width: 60
+                bgColor: UIColor.backgroundColorForType(type.type.name ?? "normal")
             )
             typeStack.addArrangedSubview(label)
         }
