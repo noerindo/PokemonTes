@@ -11,19 +11,15 @@ import RxSwift
 import RxCocoa
 
 class HomeViewModel {
-    // MARK: - Dependencies
     private let apiService = GenerateApiExt.shared
     private let disposeBag = DisposeBag()
     
-    // MARK: - Pagination State
     private var isFirstLoad = true
     private var offset = 0
     private let limit = 20
     
-    // MARK: - Data Storage
     private var currentPokemons: [DetailPokemonModel] = []
     
-    // MARK: - Outputs
     private let pokemonsRelay = BehaviorRelay<[DetailPokemonModel]>(value: [])
     var pokemons: Observable<[DetailPokemonModel]> {
         return pokemonsRelay.asObservable()
