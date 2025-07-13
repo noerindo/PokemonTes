@@ -27,6 +27,8 @@ class SessionManager {
     func logoutUser() {
         userDefaults.set(false, forKey: keyIsLoggedIn)
         userDefaults.removeObject(forKey: keyLoggedInUserId)
+        userDefaults.removeObject(forKey: "Pokemons")
+        
     }
     
     var isLoggedIn: Bool {

@@ -22,7 +22,7 @@ class endPointAPI {
         func path() -> String {
             switch self {
             case .pokemons:
-                return "ditto"
+                return "limit=10&offset=0"
             case .morePoke(let offsetPoke, let limit):
                 return "offset=\(offsetPoke)&limit=\(limit)"
             }
@@ -45,7 +45,7 @@ public class GenerateApiExt {
     private init() {}
     
     // MARK: - Get Pokémons List
-    func getPokemons(isMockAPI: Bool = false) -> Single<PokemonsModel> {
+    func getPokemons() -> Single<PokemonsModel> {
         return Single.create { single in
             let endpoint = endPointAPI.getFullURL(for: .pokemons)
             

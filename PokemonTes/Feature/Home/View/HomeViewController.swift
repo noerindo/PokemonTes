@@ -17,9 +17,9 @@ class HomeViewController: UIViewController {
     private let viewModel = HomeViewModel()
     private let disposeBag = DisposeBag()
     
-    private var pokemons: [DetailPokemonModel] = []
+    private var pokemons: [Pokemon] = []
     private var imageLoadCounter = 0
-    private var filteredPokemons: [DetailPokemonModel] = []
+    private var filteredPokemons: [Pokemon] = []
     var searchActive: Bool = false
     private var isFetchingMore = false
     private var isFirstLoad = true
@@ -91,6 +91,7 @@ class HomeViewController: UIViewController {
             }
             self.collectionView.reloadData()
         }
+        viewModel.loadCachedPokemonsIfAny()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -133,8 +134,7 @@ class HomeViewController: UIViewController {
         
         searchActive = true
         filteredPokemons = pokemons.filter { pokemon in
-            return pokemon.name?.lowercased().contains(query) ?? false ||
-            "\(pokemon.id ?? 0)".contains(query)
+            return pokemon.name?.lowercased().contains(query) ?? false
         }
         collectionView.reloadData()
     }
@@ -204,16 +204,16 @@ class HomeViewController: UIViewController {
         
         viewModel.isLoading
             .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] isLoading in
+            .subscribe(onNext: { isLoading in
             })
             .disposed(by: disposeBag)
         
         viewModel.onLoadingDetail = { [weak self] isLoading in
             guard let self = self else { return }
             if isLoading {
-                MBProgressHUD.showAdded(to: self.view, animated: true)
+                LoadingHUD.show(in: self.view, text: "Loading...")
             } else {
-                MBProgressHUD.hide(for: self.view, animated: true)
+                LoadingHUD.hide(from: self.view)
             }
         }
     }
@@ -275,6 +275,11 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout, UICollectionVi
         
         viewModel.didSelectPokemon(selectedPokemon) { [weak self] detail in
             guard let self = self else { return }
+            guard let detail = detail else {
+                SnackBarWarning.make(in: view, message: "Gagal memuat data, check jaringan Anda", duration: .lengthShort).show()
+                return
+            }
+            
             let detailVC = DetailViewController(data: detail)
             self.navigationController?.pushViewController(detailVC, animated: true)
         }
@@ -298,15 +303,14 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout, UICollectionVi
 }
 
 extension HomeViewController {
-    private func getCardCell(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath, data: [DetailPokemonModel]) -> UICollectionViewCell {
+    private func getCardCell(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath, data: [Pokemon]) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CardPokemonCell", for: indexPath) as! CardPokemonCell
         
         let pokemon = data[indexPath.item]
         
         cell.configure(
-            id: pokemon.id ?? 0,
+            id: PokemonUtils.extractPokemonID(from: pokemon.urlPokemon ?? "") ?? 1,
             name: pokemon.name ?? "Labubu",
-            types: pokemon.types,
             mode: self.isGrid ? .grid : .list
         )
         

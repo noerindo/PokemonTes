@@ -56,13 +56,6 @@ class CardPokemonCell: UICollectionViewCell {
         return label
     }()
     
-    private let typeStack: UIStackView = {
-        let stack = UIStackView()
-        stack.isSkeletonable = true
-        stack.axis = .horizontal
-        return stack
-    }()
-    
     private let pokemonImage: UIImageView = {
         let imageView = UIImageView()
         imageView.isSkeletonable = true
@@ -93,7 +86,6 @@ class CardPokemonCell: UICollectionViewCell {
         pokemonImage.image = nil
         numberLabel.text = nil
         nameLabel.text = nil
-        typeStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
         rootStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
     }
     
@@ -120,21 +112,19 @@ class CardPokemonCell: UICollectionViewCell {
         }
     }
     
-    func configure(id: Int, name: String, types: [Types], mode: DisplayMode) {
-        let typesPokemon = types.compactMap { $0.type.name }
+    func configure(id: Int, name: String, mode: DisplayMode) {
         currentMode = mode
         numberLabel.text = String(format: "#%03d", id)
         nameLabel.text = name.capitalized
         pokemonImage.kf.setImage(with: PokemonUtils.getPokemonImageURL(from: id))
         
-        let typeName = types.first?.type.name ?? "normal"
-        blurBackgroundView.backgroundColor = UIColor.backgroundColorForType(typeName, isBlur: true)
+        blurBackgroundView.backgroundColor = UIColor.backgroundColorForType("grass", isBlur: true)
         
         switch mode {
         case .grid:
             configureGrid()
         case .list:
-            configureList(types: typesPokemon)
+            configureList()
         }
     }
     
@@ -163,21 +153,12 @@ class CardPokemonCell: UICollectionViewCell {
         }
     }
     
-    private func configureList(types: [String]) {
+    private func configureList() {
         rootStack.axis = .horizontal
         rootStack.alignment = .center
         rootStack.distribution = .fillProportionally
         
-        typeStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        for type in types {
-            let label = PokemonUtils.createTypeLabel(
-                text: "  \(type.capitalized)  ",
-                bgColor: UIColor.backgroundColorForType(type)
-            )
-            typeStack.addArrangedSubview(label)
-        }
-        
-        let infoStack = UIStackView(arrangedSubviews: [numberLabel, nameLabel, typeStack])
+        let infoStack = UIStackView(arrangedSubviews: [numberLabel, nameLabel])
         infoStack.axis = .vertical
         infoStack.spacing = 4
         infoStack.alignment = .leading

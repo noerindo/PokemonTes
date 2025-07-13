@@ -9,9 +9,9 @@ import Foundation
 import UIKit
 
 struct PokemonUtils {
-    static func extractPokemonID(from url: String) -> String? {
+    static func extractPokemonID(from url: String) -> Int? {
         let trimmedURL = url.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-        return trimmedURL.components(separatedBy: "/").last
+        return Int(trimmedURL.components(separatedBy: "/").last ?? "")
     }
     
     static func getPokemonImageURL(from id: Int, isGif: Bool = false) -> URL? {

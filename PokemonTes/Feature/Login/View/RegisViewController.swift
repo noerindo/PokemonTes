@@ -158,7 +158,7 @@ class RegisViewController: UIViewController {
     
     private func navigateToLogin() {
         let loginVC = LoginViewController()
-        navigationController?.pushViewController(loginVC, animated: true)
+        navigationController?.setViewControllers([loginVC], animated: true)
     }
 }
 

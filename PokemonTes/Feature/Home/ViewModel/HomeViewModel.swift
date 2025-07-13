@@ -18,10 +18,11 @@ class HomeViewModel {
     private var offset = 0
     private let limit = 20
     
-    private var currentPokemons: [DetailPokemonModel] = []
+    private var currentPokemons: [Pokemon] = []
+    private let cacheKey = "Pokemons"
     
-    private let pokemonsRelay = BehaviorRelay<[DetailPokemonModel]>(value: [])
-    var pokemons: Observable<[DetailPokemonModel]> {
+    private let pokemonsRelay = BehaviorRelay<[Pokemon]>(value: [])
+    var pokemons: Observable<[Pokemon]> {
         return pokemonsRelay.asObservable()
     }
     
@@ -38,82 +39,105 @@ class HomeViewModel {
     var onLoadingDetail: ((Bool) -> Void)?
     
     func fetchPokemon() {
+        guard !loadingRelay.value else { return }
         loadingRelay.accept(true)
-        var fetchSingle: Single<[DetailPokemonModel]>
         
-        if isFirstLoad {
-            isFirstLoad = false
-            fetchSingle = apiService.getPokemons()
-                .flatMap { [unowned self] in self.fetchDetailPokemons(from: $0.pokemons) }
-        } else {
-            fetchSingle = apiService.getMorePokemon(offset: offset)
-                .flatMap { [unowned self] in self.fetchDetailPokemons(from: $0.pokemons) }
+        if !NetworkUtils.isConnected {
+            let cached = loadPokemonsFromCache()
+            currentPokemons = cached
+            pokemonsRelay.accept(cached)
+            loadingRelay.accept(false)
+            return
         }
         
-        fetchSingle
-            .observe(on: MainScheduler.instance)
+        let fetch: Single<PokemonsModel> = isFirstLoad
+        ? apiService.getPokemons()
+        : apiService.getMorePokemon(offset: offset)
+        
+        fetch.observe(on: MainScheduler.instance)
             .subscribe(
-                onSuccess: { [weak self] details in
+                onSuccess: { [weak self] result in
                     guard let self = self else { return }
-                    self.currentPokemons += details
-                    self.pokemonsRelay.accept(self.currentPokemons)
+                    if self.isFirstLoad {
+                        self.currentPokemons = result.pokemons
+                        self.isFirstLoad = false
+                    } else {
+                        self.currentPokemons += result.pokemons
+                    }
                     self.offset = self.currentPokemons.count
-                    
+                    self.pokemonsRelay.accept(self.currentPokemons)
+                    self.savePokemonsToCache(Array(self.currentPokemons.prefix(10)))
                     self.loadingRelay.accept(false)
                 },
                 onFailure: { [weak self] error in
                     self?.loadingRelay.accept(false)
-                    let message = error.localizedDescription.isEmpty ? "Unknown error" : error.localizedDescription
-                    self?.errorMessage.accept(message)
+                    self?.errorMessage.accept(error.localizedDescription.isEmpty ? "Unknown error" : error.localizedDescription)
                 }
             )
             .disposed(by: disposeBag)
     }
     
+    
+    func loadCachedPokemonsIfAny() {
+        let cached = loadPokemonsFromCache()
+        guard !cached.isEmpty else { return }
+        currentPokemons = cached
+        pokemonsRelay.accept(currentPokemons)
+    }
+    
     // MARK: - Fetch Pokémons with Details (Reactive)
-    private func fetchDetailPokemons(from list: [Pokemon]) -> Single<[DetailPokemonModel]> {
-        let detailSingles = list.compactMap {
-            apiService.getDetailPokemon(url: $0.urlPokemon ?? "")
+    func didSelectPokemon(_ pokemon: Pokemon, completion: @escaping (DetailPokemonModel?) -> Void) {
+        guard let url = pokemon.urlPokemon else {
+            completion(nil)
+            return
         }
-        return Single.zip(detailSingles)
-    }
-    
-    
-    func fetchImagePokemon(from urlPokemon: Int) -> Single<UIImage> {
-        return Single<UIImage>.create { single in
-            
-            guard let url = PokemonUtils.getPokemonImageURL(from: urlPokemon) else {
-                let placeholder = UIImage(systemName: "heart.fill") ?? UIImage()
-                single(.success(placeholder))
-                return Disposables.create()
-            }
-            
-            DispatchQueue.global().async {
-                if let data = try? Data(contentsOf: url),
-                   let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        single(.success(image))
-                    }
-                } else {
-                    let fallback = UIImage(systemName: "heart.fill") ?? UIImage()
-                    DispatchQueue.main.async {
-                        single(.success(fallback))
-                    }
-                }
-            }
-            
-            return Disposables.create()
-        }
-    }
-    
-    func didSelectPokemon(_ pokemon: DetailPokemonModel, completion: @escaping (DetailPokemonModel) -> Void) {
         onLoadingDetail?(true)
         
-        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-            DispatchQueue.main.async {
-                self.onLoadingDetail?(false)
-                completion(pokemon)
+        apiService.getDetailPokemon(url: url)
+            .observe(on: MainScheduler.instance)
+            .subscribe(
+                onSuccess: { [weak self] detail in
+                    self?.onLoadingDetail?(false)
+                    completion(detail)
+                },
+                onFailure: { [weak self] error in
+                    self?.onLoadingDetail?(false)
+                    self?.errorMessage.accept(error.localizedDescription.isEmpty ? "Unknown error" : error.localizedDescription)
+                    completion(nil)
+                }
+            )
+            .disposed(by: disposeBag)
+    }
+    
+    // MARK: - save local pokemon
+    private func savePokemonsToCache(_ pokemons: [Pokemon]) {
+        let uniquePokemons = Array(
+            Dictionary(grouping: pokemons, by: { $0.name ?? "" })
+                .compactMap { $0.value.first }
+        )
+        let limitedPokemons = Array(uniquePokemons.prefix(10))
+        do {
+            let data = try JSONEncoder().encode(limitedPokemons)
+            UserDefaults.standard.set(data, forKey: cacheKey)
+        } catch {
+            print("failed save: \(error)")
+        }
+    }
+    
+    private func loadPokemonsFromCache() -> [Pokemon] {
+        guard let data = UserDefaults.standard.data(forKey: cacheKey) else { return [] }
+        do {
+            let pokemons = try JSONDecoder().decode([Pokemon].self, from: data)
+            let sortedPokemons = pokemons.sorted {
+                let id1 = PokemonUtils.extractPokemonID(from: $0.urlPokemon ?? "") ?? 0
+                let id2 = PokemonUtils.extractPokemonID(from: $1.urlPokemon ?? "") ?? 0
+                return id1 < id2
             }
+            
+            return sortedPokemons
+        } catch {
+            print("failed load cached \(error)")
+            return []
         }
     }
     
