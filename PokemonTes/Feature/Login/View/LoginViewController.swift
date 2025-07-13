@@ -156,15 +156,13 @@ class LoginViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
-    
     @objc private func goToLogin() {
         guard
-            let email = emailTextField.text,
-            let password = passwordTextField.text
+            let emailUser = emailTextField.text,
+            let passwordUser = passwordTextField.text
         else { return }
         
     }
-    
     
     @objc private func goToRegister() {
         let registerVC = RegisViewController()
@@ -172,10 +170,15 @@ class LoginViewController: UIViewController {
     }
     
     private func navigateToHome() {
-        let homeVC = HomeViewController()
-        navigationController?.pushViewController(homeVC, animated: true)
+        let tabVC = MainTabViewController()
+        let nav = UINavigationController(rootViewController: tabVC)
+        
+        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let sceneDelegate = scene.delegate as? SceneDelegate {
+            sceneDelegate.window?.rootViewController = nav
+            sceneDelegate.window?.makeKeyAndVisible()
+        }
     }
-    
     
 }
 

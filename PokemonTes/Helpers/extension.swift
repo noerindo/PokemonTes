@@ -40,6 +40,13 @@ extension UIColor {
         case "fire": return .systemRed.withAlphaComponent(isBlur ? 0.3 : 1)
         case "grass": return .systemGreen.withAlphaComponent(isBlur ? 0.3 : 1)
         case "electric": return .systemYellow.withAlphaComponent(isBlur ? 0.3 : 1)
+        case "bug": return .systemTeal.withAlphaComponent(isBlur ? 0.3 : 1)
+        case "flying": return .systemIndigo.withAlphaComponent(isBlur ? 0.3 : 1)
+        case "psychic": return .systemPink .withAlphaComponent(isBlur ? 0.3 : 1)
+        case "dragon": return .systemOrange.withAlphaComponent(isBlur ? 0.3 : 1)
+        case "dark": return .darkGray.withAlphaComponent(isBlur ? 0.3 : 1)
+        case "steel": return .systemGray.withAlphaComponent(isBlur ? 0.3 : 1)
+        case "fairy": return .systemPink.withAlphaComponent(isBlur ? 0.3 : 1)
         default: return .gray.withAlphaComponent(isBlur ? 0.3 : 1)
         }
     }

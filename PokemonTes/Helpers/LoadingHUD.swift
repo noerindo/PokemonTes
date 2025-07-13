@@ -10,14 +10,14 @@ import MBProgressHUD
 
 final class LoadingHUD {
     
-    static func show(in view: UIView, text: String? = nil) {
+    static func show(in view: UIView, text: String = "Loading...") {
         DispatchQueue.main.async {
             let hud = MBProgressHUD.showAdded(to: view, animated: true)
             hud.mode = .indeterminate
-            hud.label.text = text ?? "Loading..."
+            hud.label.text = text
         }
     }
-
+    
     static func hide(from view: UIView) {
         DispatchQueue.main.async {
             MBProgressHUD.hide(for: view, animated: true)
@@ -25,7 +25,10 @@ final class LoadingHUD {
     }
     
     static func hideAll() {
-            guard let window = UIApplication.shared.windows.first else { return }
-            MBProgressHUD.hide(for: window, animated: true)
+        DispatchQueue.main.async {
+            if let keyWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) {
+                MBProgressHUD.hide(for: keyWindow, animated: true)
+            }
         }
+    }
 }

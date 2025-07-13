@@ -51,6 +51,8 @@ final class LoginViewModel {
             if let user = realm.objects(UserModel.self).filter("email == %@", email).first {
                 if user.password == password {
                     UserDefaults.standard.set(true, forKey: "isLoggedIn")
+                    UserDefaults.standard.set(user.id.stringValue, forKey: "userId")
+
                     
                     successMessage.accept("Login berhasil!")
                     loginSuccess.accept(())

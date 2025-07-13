@@ -45,11 +45,14 @@ struct DetailPokemonModel: Codable, ObjectData {
     let name: String?
     let abilities: [Abilitys]
     let types: [Types]
+    let base: Int
+    
     enum CodingKeys: String, CodingKey {
         case id = "id"
         case name = "name"
         case abilities = "abilities"
         case types = "types"
+        case base = "base_experience"
     }
     
     init(_ dict:  [String: Any]) {
@@ -61,6 +64,7 @@ struct DetailPokemonModel: Codable, ObjectData {
         self.types = (dict["types"] as? [[String : Any]] ?? []).map {
             Types($0)
         }
+        self.base = dict["base_experience"] as? Int ?? 0
         
     }
     

@@ -9,16 +9,20 @@ import UIKit
 import RxSwift
 import SkeletonView
 import SnapKit
+import XLPagerTabStrip
+import MBProgressHUD
 
 class HomeViewController: UIViewController {
     
-    private let viewModel = PokemonViewModel()
+    private let viewModel = HomeViewModel()
     private let disposeBag = DisposeBag()
     
     private var pokemons: [DetailPokemonModel] = []
     private var imageLoadCounter = 0
     private var filteredPokemons: [DetailPokemonModel] = []
     var searchActive: Bool = false
+    private var isFetchingMore = false
+    private var isFirstLoad = true
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -91,10 +95,14 @@ class HomeViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        [titleLabel, subtitleLabel, toggleButton, searchBar, collectionView].forEach {
-            $0.isSkeletonable = true
-            $0.showAnimatedGradientSkeleton()
-            $0.showAnimatedSkeleton(usingColor: .concrete, transition: .crossDissolve(0.25))
+        if isFirstLoad {
+            viewModel.fetchPokemon()
+            isFirstLoad = false
+            [titleLabel, subtitleLabel, toggleButton, searchBar, collectionView].forEach {
+                $0.isSkeletonable = true
+                $0.showAnimatedGradientSkeleton()
+                $0.showAnimatedSkeleton(usingColor: .concrete, transition: .crossDissolve(0.25))
+            }
         }
     }
     
@@ -113,10 +121,6 @@ class HomeViewController: UIViewController {
         isGrid.toggle()
         let icon = isGrid ? "list.bullet" : "square.grid.2x2"
         toggleButton.setImage(UIImage(systemName: icon), for: .normal)
-    }
-    
-    @objc private func viewMoreTapped() {
-        viewModel.fetchPokemon()
     }
     
     @objc private func textFieldDidChange(_ textField: UITextField) {
@@ -203,6 +207,27 @@ class HomeViewController: UIViewController {
             .subscribe(onNext: { [weak self] isLoading in
             })
             .disposed(by: disposeBag)
+        
+        viewModel.onLoadingDetail = { [weak self] isLoading in
+            guard let self = self else { return }
+            if isLoading {
+                MBProgressHUD.showAdded(to: self.view, animated: true)
+            } else {
+                MBProgressHUD.hide(for: self.view, animated: true)
+            }
+        }
+    }
+    
+    private func fetchMorePokemons() {
+        viewModel.fetchPokemon()
+        viewModel.isLoading
+            .filter { !$0 }
+            .take(1)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] _ in
+                self?.isFetchingMore = false
+            })
+            .disposed(by: disposeBag)
     }
     
 }
@@ -244,6 +269,32 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout, UICollectionVi
         : CGSize(width: width, height: 110)
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let currentData = searchActive ? filteredPokemons : pokemons
+        let selectedPokemon = currentData[indexPath.item]
+        
+        viewModel.didSelectPokemon(selectedPokemon) { [weak self] detail in
+            guard let self = self else { return }
+            let detailVC = DetailViewController(data: detail)
+            self.navigationController?.pushViewController(detailVC, animated: true)
+        }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard !searchActive else { return }
+        guard !viewModel.isLoadingValue else { return }
+        guard !isFetchingMore else { return }
+        
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let frameHeight = scrollView.frame.size.height
+        
+        if offsetY > contentHeight - frameHeight - 100 {
+            isFetchingMore = true
+            fetchMorePokemons()
+        }
+    }
+    
 }
 
 extension HomeViewController {
@@ -270,7 +321,7 @@ extension HomeViewController {
         return cell
         
     }
-
+    
 }
 
 // MARK: search bar delegate
@@ -287,6 +338,13 @@ extension HomeViewController : UISearchBarDelegate {
         }
         
         collectionView.reloadData()
+    }
+}
+
+// MARK: tabbar
+extension HomeViewController : IndicatorInfoProvider {
+    func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
+        return IndicatorInfo(title: "Home")
     }
 }
 

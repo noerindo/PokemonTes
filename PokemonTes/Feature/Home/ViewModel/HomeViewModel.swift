@@ -1,5 +1,5 @@
 //
-//  PokemonViewModel.swift
+//  HomeViewModel.swift
 //  PokemonTes
 //
 //  Created by Phincon on 12/07/25.
@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class PokemonViewModel {
+class HomeViewModel {
     // MARK: - Dependencies
     private let apiService = GenerateApiExt.shared
     private let disposeBag = DisposeBag()
@@ -39,10 +39,7 @@ class PokemonViewModel {
     
     let errorMessage = PublishRelay<String>()
     
-    init() {
-        fetchPokemon()
-    }
-    
+    var onLoadingDetail: ((Bool) -> Void)?
     
     func fetchPokemon() {
         loadingRelay.accept(true)
@@ -110,6 +107,17 @@ class PokemonViewModel {
             }
             
             return Disposables.create()
+        }
+    }
+    
+    func didSelectPokemon(_ pokemon: DetailPokemonModel, completion: @escaping (DetailPokemonModel) -> Void) {
+        onLoadingDetail?(true)
+        
+        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+            DispatchQueue.main.async {
+                self.onLoadingDetail?(false)
+                completion(pokemon)
+            }
         }
     }
     

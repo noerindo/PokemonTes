@@ -170,13 +170,10 @@ class CardPokemonCell: UICollectionViewCell {
         
         typeStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
         for type in types {
-            let label = UILabel()
-            label.text = "  \(type.capitalized)  "
-            label.font = UIFont.systemFont(ofSize: 12, weight: .bold)
-            label.textColor = .white
-            label.backgroundColor = UIColor.backgroundColorForType(type)
-            label.layer.cornerRadius = 10
-            label.clipsToBounds = true
+            let label = PokemonUtils.createTypeLabel(
+                text: "  \(type.capitalized)  ",
+                bgColor: UIColor.backgroundColorForType(type), width: 60
+            )
             typeStack.addArrangedSubview(label)
         }
         
