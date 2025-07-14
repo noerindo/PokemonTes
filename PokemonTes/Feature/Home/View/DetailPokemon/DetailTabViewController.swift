@@ -11,7 +11,7 @@ import SnapKit
 
 class DetailTabViewController: UIViewController {
     
-    private let viewModel: DetailTabViewModel
+    private let viewModel: DetailTabViewItem
     
     private let pokemonImage: UIImageView = {
         let image =  UIImageView()
@@ -28,8 +28,8 @@ class DetailTabViewController: UIViewController {
         return stack
     }()
     
-    init(viewModel: DetailTabViewModel) {
-        self.viewModel = viewModel
+    init(detailPokemon: DetailTabViewItem) {
+        self.viewModel = detailPokemon
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -62,7 +62,7 @@ class DetailTabViewController: UIViewController {
             make.leading.trailing.equalToSuperview().inset(24)
         }
         
-        pokemonImage.kf.setImage(with: PokemonUtils.getPokemonImageURL(from: viewModel.id ))
+        pokemonImage.kf.setImage(with: PokemonUtils.getPokemonImageURL(from: viewModel.id))
     }
     
     private func configureView() {
@@ -104,6 +104,6 @@ class DetailTabViewController: UIViewController {
 
 extension DetailTabViewController: IndicatorInfoProvider {
     func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
-        return IndicatorInfo(title: viewModel.title)
+        return IndicatorInfo(title: "viewModel.title")
     }
 }

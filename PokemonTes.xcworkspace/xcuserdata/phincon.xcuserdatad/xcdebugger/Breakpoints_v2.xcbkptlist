@@ -50,36 +50,6 @@
             endingLineNumber = "152"
             landmarkName = "bindViewModel()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "C07DF2CD-78A7-4A5B-9346-13B50CEB921D - c8227eff92c2c89e"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "PokemonTes.RegisViewController.bindViewModel() -&gt; ()"
-                  moduleName = "PokemonTes.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/phincon/Desktop/PokemonTes/PokemonTes/Feature/Login/View/RegisViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "152"
-                  endingLineNumber = "152">
-               </Location>
-               <Location
-                  uuid = "C07DF2CD-78A7-4A5B-9346-13B50CEB921D - 2df0ce2a8ecc16d5"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (Swift.String) -&gt; () in PokemonTes.RegisViewController.bindViewModel() -&gt; ()"
-                  moduleName = "PokemonTes.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/phincon/Desktop/PokemonTes/PokemonTes/Feature/Login/View/RegisViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "152"
-                  endingLineNumber = "152">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -236,8 +206,8 @@
             filePath = "PokemonTes/Feature/Home/View/DetailPokemon/DetailViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "148"
-            endingLineNumber = "148"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
             landmarkName = "backHome()"
             landmarkType = "7">
          </BreakpointContent>
@@ -255,22 +225,6 @@
             startingLineNumber = "161"
             endingLineNumber = "161"
             landmarkName = "goToLogin()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "5A68CA18-BC51-4F12-AF6D-14341AB72C26"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "PokemonTes/Feature/Home/View/DetailPokemon/DetailViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "99"
-            endingLineNumber = "99"
-            landmarkName = "viewControllers(for:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -326,7 +280,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "CB531F37-A86E-4E71-9D82-CB99F83CAEAC"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "PokemonTes/Feature/Home/ViewModel/HomeViewModel.swift"
@@ -335,6 +289,38 @@
             startingLineNumber = "57"
             endingLineNumber = "57"
             landmarkName = "fetchPokemon()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D5DCB2C2-C36B-4CE7-B05C-C998587C9F81"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PokemonTes/Feature/Home/View/DetailPokemon/DetailViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "77"
+            endingLineNumber = "77"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7518FBE9-DCCC-48B8-A0F1-37436FA46598"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PokemonTes/Feature/Home/View/DetailPokemon/DetailViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "62"
+            endingLineNumber = "62"
+            landmarkName = "init(viewModel:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

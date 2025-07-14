@@ -10,7 +10,8 @@ import XLPagerTabStrip
 import SnapKit
 
 class DetailViewController: ButtonBarPagerTabStripViewController, UICollectionViewDelegateFlowLayout {
-    private let data: DetailPokemonModel
+    private let viewModel: DetailViewModelProtocol
+    var isFirstLoad: Bool = true
     
     private let headerView: UIView = {
         let view = UIView()
@@ -56,8 +57,8 @@ class DetailViewController: ButtonBarPagerTabStripViewController, UICollectionVi
         return button
     }()
     
-    init(data: DetailPokemonModel) {
-        self.data = data
+    init(viewModel: DetailViewModelProtocol) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -66,14 +67,16 @@ class DetailViewController: ButtonBarPagerTabStripViewController, UICollectionVi
     }
     
     override func viewDidLoad() {
+        settings.style.selectedBarBackgroundColor = .clear
+        settings.style.selectedBarHeight = 0
         super.viewDidLoad()
         buttonBarView.delegate = self
         self.containerView.backgroundColor = .white
         self.view.backgroundColor = .white
         self.view.bringSubviewToFront(containerView)
         setupBar()
-        setupHeader()
-        setData(data)
+        setupConstrain()
+        setupHeader(viewModel.getData[2])
     }
     
     override func viewDidLayoutSubviews() {
@@ -85,26 +88,9 @@ class DetailViewController: ButtonBarPagerTabStripViewController, UICollectionVi
     }
     
     override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
-        let idPokemon = data.id ?? 0
-        
-        let abilitiesVM = DetailTabViewModel(
-            id: idPokemon, title: "Abilities",
-            contentType: .abilities(data.abilities)
-        )
-        let baseXPVM = DetailTabViewModel(
-            id: idPokemon, title: "Base XP",
-            contentType: .baseXP(data.base ?? 0)
-        )
-        let typesVM = DetailTabViewModel(
-            id: idPokemon, title: "Type",
-            contentType: .types(data.types)
-        )
-        
-        return [
-            DetailTabViewController(viewModel: abilitiesVM),
-            DetailTabViewController(viewModel: baseXPVM),
-            DetailTabViewController(viewModel: typesVM)
-        ]
+        return viewModel.getData.map {
+            DetailTabViewController(detailPokemon: $0)
+        }
     }
     
     @nonobjc
@@ -118,9 +104,7 @@ class DetailViewController: ButtonBarPagerTabStripViewController, UICollectionVi
     func setupBar() {
         settings.style.buttonBarBackgroundColor = .clear
         settings.style.buttonBarItemBackgroundColor = .clear
-        settings.style.selectedBarBackgroundColor = .clear
         settings.style.buttonBarItemTitleColor = .clear
-        settings.style.selectedBarHeight = 0
         settings.style.buttonBarMinimumLineSpacing = 0
         settings.style.buttonBarMinimumInteritemSpacing = 0
         settings.style.buttonBarItemLeftRightMargin = 0
@@ -148,7 +132,7 @@ class DetailViewController: ButtonBarPagerTabStripViewController, UICollectionVi
         navigationController?.popViewController(animated: true)
     }
     
-    private func setupHeader() {
+    private func setupConstrain() {
         
         view.addSubview(headerView)
         headerView.addSubview(nameLabel)
@@ -200,22 +184,23 @@ class DetailViewController: ButtonBarPagerTabStripViewController, UICollectionVi
         
     }
     
-    func setData(_ data: DetailPokemonModel) {
-        nameLabel.text = data.name?.capitalized
-        numberLabel.text = String(format: "#%03d", data.id ?? 0)
-        let typeName = data.types.first?.type.name ?? "normal"
+    func setupHeader(_ detailPokemon: DetailTabViewItem) {
+        nameLabel.text = detailPokemon.title.capitalized
+        numberLabel.text = String(format: "#%03d", detailPokemon.id)
+        let typeName = detailPokemon.typeNameValue
         buttonBarView.backgroundColor = UIColor.backgroundColorForType(typeName, isBlur: true)
         headerView.backgroundColor = UIColor.backgroundColorForType(typeName, isBlur: true)
-        pokemonImage.kf.setImage(with: PokemonUtils.getPokemonImageURL(from: data.id ?? 0, isGif: true))
+        pokemonImage.kf.setImage(with: PokemonUtils.getPokemonImageURL(from: detailPokemon.id, isGif: true))
         typeStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        for type in data.types {
-            let label = PokemonUtils.createTypeLabel(
-                text: "\(type.type.name?.capitalized ?? "Pokédex")",
-                bgColor: UIColor.backgroundColorForType(type.type.name ?? "normal")
-            )
-            typeStack.addArrangedSubview(label)
+        if let types = detailPokemon.typesList {
+            for type in types {
+                let label = PokemonUtils.createTypeLabel(
+                    text: "\(type.type.name?.capitalized ?? "Pokédex")",
+                    bgColor: UIColor.backgroundColorForType(type.type.name ?? "normal")
+                )
+                typeStack.addArrangedSubview(label)
+            }
         }
-        
     }
     
 }

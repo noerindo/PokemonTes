@@ -280,7 +280,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout, UICollectionVi
                 return
             }
             
-            let detailVC = DetailViewController(data: detail)
+            let detailVC = DetailViewController(viewModel: DetailTabViewModel(detail))
             self.navigationController?.pushViewController(detailVC, animated: true)
         }
     }
