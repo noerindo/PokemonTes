@@ -307,12 +307,7 @@ extension HomeViewController {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CardPokemonCell", for: indexPath) as! CardPokemonCell
         
         let pokemon = data[indexPath.item]
-        
-        cell.configure(
-            id: PokemonUtils.extractPokemonID(from: pokemon.urlPokemon ?? "") ?? 1,
-            name: pokemon.name ?? "Labubu",
-            mode: self.isGrid ? .grid : .list
-        )
+        cell.viewModel = CardPokemonViewModel(id: PokemonUtils.extractPokemonID(from: pokemon.urlPokemon ?? "") ?? 1, name: pokemon.name ?? "Labubu", mode: self.isGrid ? .grid : .list )
         
         self.imageLoadCounter += 1
         if self.imageLoadCounter == self.pokemons.count {

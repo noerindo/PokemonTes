@@ -19,6 +19,14 @@ struct DetailTabViewItem {
     var title: String
     var contentType: DetailTabContentType
     
+    var tabTitle: String {
+        switch contentType {
+        case .abilities: return "Abilities"
+        case .baseXP: return "Base XP"
+        case .types: return "Types"
+        }
+    }
+    
 }
 
 protocol DetailViewModelProtocol {

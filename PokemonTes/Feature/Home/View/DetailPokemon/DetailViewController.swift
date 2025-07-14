@@ -185,12 +185,12 @@ class DetailViewController: ButtonBarPagerTabStripViewController, UICollectionVi
     }
     
     func setupHeader(_ detailPokemon: DetailTabViewItem) {
+        pokemonImage.kf.setImage(with: PokemonUtils.getPokemonImageURL(from: detailPokemon.id, isGif: true), placeholder: UIImage(named: "Pokeball"))
         nameLabel.text = detailPokemon.title.capitalized
         numberLabel.text = String(format: "#%03d", detailPokemon.id)
         let typeName = detailPokemon.typeNameValue
         buttonBarView.backgroundColor = UIColor.backgroundColorForType(typeName, isBlur: true)
         headerView.backgroundColor = UIColor.backgroundColorForType(typeName, isBlur: true)
-        pokemonImage.kf.setImage(with: PokemonUtils.getPokemonImageURL(from: detailPokemon.id, isGif: true))
         typeStack.arrangedSubviews.forEach { $0.removeFromSuperview() }
         if let types = detailPokemon.typesList {
             for type in types {

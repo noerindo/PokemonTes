@@ -104,6 +104,6 @@ class DetailTabViewController: UIViewController {
 
 extension DetailTabViewController: IndicatorInfoProvider {
     func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
-        return IndicatorInfo(title: "viewModel.title")
+        return IndicatorInfo(title: viewModel.tabTitle)
     }
 }

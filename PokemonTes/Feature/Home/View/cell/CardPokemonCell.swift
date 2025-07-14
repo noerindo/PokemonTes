@@ -12,10 +12,12 @@ import Kingfisher
 
 class CardPokemonCell: UICollectionViewCell {
     
-    enum DisplayMode {
-        case grid
-        case list
-    }
+    var viewModel: CardPokemonViewModel? {
+           didSet {
+               guard let viewModel = viewModel else { return }
+               setupCard(viewModel)
+           }
+       }
     
     private let blurBackgroundView: UIVisualEffectView = {
         let blurEffect = UIBlurEffect(style: .light)
@@ -112,15 +114,15 @@ class CardPokemonCell: UICollectionViewCell {
         }
     }
     
-    func configure(id: Int, name: String, mode: DisplayMode) {
-        currentMode = mode
-        numberLabel.text = String(format: "#%03d", id)
-        nameLabel.text = name.capitalized
-        pokemonImage.kf.setImage(with: PokemonUtils.getPokemonImageURL(from: id))
+    func setupCard(_ cardData: CardPokemonViewModel) {
+        currentMode = cardData.mode
+        numberLabel.text = String(format: "#%03d", cardData.id)
+        nameLabel.text = cardData.name.capitalized
+        pokemonImage.kf.setImage(with: PokemonUtils.getPokemonImageURL(from: cardData.id))
         
         blurBackgroundView.backgroundColor = UIColor.backgroundColorForType("grass", isBlur: true)
         
-        switch mode {
+        switch cardData.mode {
         case .grid:
             configureGrid()
         case .list:
