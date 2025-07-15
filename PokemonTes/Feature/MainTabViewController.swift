@@ -9,8 +9,7 @@ import UIKit
 import XLPagerTabStrip
 
 class MainTabViewController: ButtonBarPagerTabStripViewController {
-    
-    private lazy var homeVC = HomeViewController()
+    private lazy var homeVC = HomeViewController(viewModel: HomeViewModel())
     private lazy var profileVC = ProfileViewController()
     
     override func viewDidLoad() {

@@ -14,7 +14,7 @@ import MBProgressHUD
 
 class HomeViewController: UIViewController {
     
-    private let viewModel = HomeViewModel()
+    private var viewModel: HomeViewModelProtocol
     private let disposeBag = DisposeBag()
     
     private var pokemons: [Pokemon] = []
@@ -22,7 +22,7 @@ class HomeViewController: UIViewController {
     private var filteredPokemons: [Pokemon] = []
     var searchActive: Bool = false
     private var isFetchingMore = false
-    private var isFirstLoad = true
+    private var shouldAnimation = true
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -73,18 +73,28 @@ class HomeViewController: UIViewController {
         }
     }
     
+    init(viewModel: HomeViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.navigationItem.hidesBackButton = true
-        configObservable()
         setupViews()
         setupLayout()
+        configObservable()
+        
         searchBar.delegate = self
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(CardPokemonCell.self, forCellWithReuseIdentifier: "CardPokemonCell")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
             self.collectionView.stopSkeletonAnimation()
             [self.titleLabel, self.subtitleLabel, self.toggleButton, self.searchBar, self.collectionView].forEach {
                 $0.hideSkeleton()
@@ -96,9 +106,8 @@ class HomeViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if isFirstLoad {
-            viewModel.fetchPokemon()
-            isFirstLoad = false
+        if shouldAnimation {
+            shouldAnimation = false
             [titleLabel, subtitleLabel, toggleButton, searchBar, collectionView].forEach {
                 $0.isSkeletonable = true
                 $0.showAnimatedGradientSkeleton()
@@ -108,6 +117,7 @@ class HomeViewController: UIViewController {
     }
     
     private func setupViews() {
+        view.isSkeletonable = true
         view.backgroundColor = .white
         view.addSubview(titleLabel)
         view.addSubview(subtitleLabel)
@@ -138,7 +148,6 @@ class HomeViewController: UIViewController {
         }
         collectionView.reloadData()
     }
-    
     
     private func setupLayout() {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -178,6 +187,9 @@ class HomeViewController: UIViewController {
             make.bottom.equalToSuperview()
         }
         
+        [titleLabel, subtitleLabel, toggleButton, searchBar, collectionView].forEach {
+            $0.isSkeletonable = true
+        }
         
     }
     
@@ -197,8 +209,14 @@ class HomeViewController: UIViewController {
                 self.pokemons = data
                 self.filteredPokemons = []
                 self.searchActive = false
-                self.imageLoadCounter = 0
                 self.collectionView.reloadData()
+                
+                self.collectionView.stopSkeletonAnimation()
+                [self.titleLabel, self.subtitleLabel, self.toggleButton, self.searchBar, self.collectionView].forEach {
+                    $0.hideSkeleton()
+                }
+                
+                self.isFetchingMore = false
             })
             .disposed(by: disposeBag)
         
@@ -208,30 +226,28 @@ class HomeViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        viewModel.onLoadingDetail = { [weak self] isLoading in
-            guard let self = self else { return }
-            if isLoading {
-                LoadingHUD.show(in: self.view, text: "Loading...")
-            } else {
-                LoadingHUD.hide(from: self.view)
-            }
-        }
-    }
-    
-    private func fetchMorePokemons() {
-        viewModel.fetchPokemon()
         viewModel.isLoading
-            .filter { !$0 }
-            .take(1)
             .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] _ in
-                self?.isFetchingMore = false
+            .subscribe(onNext: { [weak self] isLoading in
+                guard let self = self else { return }
+                if isLoading {
+                    LoadingHUD.show(in: self.view, text: "Loading...")
+                } else {
+                    LoadingHUD.hide(from: self.view)
+                }
             })
             .disposed(by: disposeBag)
     }
     
+    private func filterPokemons(with query: String) {
+        let lowercasedQuery = query.lowercased()
+        filteredPokemons = pokemons.filter {
+            $0.name?.lowercased().contains(lowercasedQuery) ?? false
+        }
+    }
+    
+    
 }
-
 
 extension HomeViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDelegate, SkeletonCollectionViewDataSource {
     func collectionSkeletonView(_ skeletonView: UICollectionView, cellIdentifierForItemAt indexPath: IndexPath) -> SkeletonView.ReusableCellIdentifier {
@@ -258,7 +274,6 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout, UICollectionVi
         
         return getCardCell(collectionView, cellForItemAt: indexPath, data: currentData)
     }
-    
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.bounds.width
@@ -296,7 +311,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout, UICollectionVi
         
         if offsetY > contentHeight - frameHeight - 100 {
             isFetchingMore = true
-            fetchMorePokemons()
+            viewModel.fetchPokemon()
         }
     }
     

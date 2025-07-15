@@ -9,6 +9,12 @@ import Foundation
 import Alamofire
 import RxSwift
 
+protocol GenerateApiProtocol {
+    func getPokemons() -> Single<PokemonsModel>
+    func getMorePokemon(offset: Int) -> Single<PokemonsModel>
+    func getDetailPokemon(url: String) -> Single<DetailPokemonModel>
+}
+
 struct ConfigAPI {
     static var hosts : String = "https://pokeapi.co/api/v2/pokemon?"
 }
@@ -39,7 +45,7 @@ class endPointAPI {
     
 }
 
-public class GenerateApiExt {
+public class GenerateApiExt: GenerateApiProtocol {
     public static let shared = GenerateApiExt()
     
     private init() {}
