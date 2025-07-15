@@ -9,7 +9,16 @@ import RxSwift
 import RxCocoa
 import RealmSwift
 
-final class LoginViewModel {
+protocol LoginViewModelProtocol {
+    var email: BehaviorRelay<String> { get }
+    var password: BehaviorRelay<String> { get }
+    var loginTapped: PublishRelay<Void> { get }
+    var successMessage: PublishRelay<String> { get }
+    var errorMessage: PublishRelay<String> { get }
+    var loginSuccess: PublishRelay<Void> { get }
+}
+
+final class LoginViewModel: LoginViewModelProtocol {
     
     let email = BehaviorRelay<String>(value: "")
     let password = BehaviorRelay<String>(value: "")

@@ -13,7 +13,7 @@ import RxCocoa
 
 class UpdateViewController: UIViewController {
     
-    private let viewModel: ProfileViewModel
+    private let viewModel: ProfileViewModelProtocol
     private let disposeBag = DisposeBag()
     
     private let imageView: UIImageView = {

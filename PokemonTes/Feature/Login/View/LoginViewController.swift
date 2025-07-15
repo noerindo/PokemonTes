@@ -13,7 +13,7 @@ import MBProgressHUD
 
 class LoginViewController: UIViewController {
     
-    private let viewModel = LoginViewModel()
+    private let viewModel: LoginViewModelProtocol
     private let disposeBag = DisposeBag()
     
     private let pokeImage: UIImageView = {
@@ -86,6 +86,16 @@ class LoginViewController: UIViewController {
         return stack
     }()
     
+    
+    init(viewModel: LoginViewModelProtocol = LoginViewModel()) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        self.viewModel = LoginViewModel()
+        super.init(coder: coder)
+       }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -165,7 +175,7 @@ class LoginViewController: UIViewController {
     }
     
     @objc private func goToRegister() {
-        let registerVC = RegisViewController()
+        let registerVC = RegisViewController(viewModel: RegisViewModel())
         self.navigationController?.pushViewController(registerVC, animated: true)
     }
     
@@ -181,5 +191,3 @@ class LoginViewController: UIViewController {
     }
     
 }
-
-

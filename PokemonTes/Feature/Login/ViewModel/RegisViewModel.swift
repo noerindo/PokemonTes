@@ -9,7 +9,17 @@ import RxSwift
 import RxCocoa
 import RealmSwift
 
-final class RegisViewModel {
+protocol RegisViewModelProtocol {
+    var name: BehaviorRelay<String> { get }
+    var email: BehaviorRelay<String> { get }
+    var password: BehaviorRelay<String> { get }
+    var registerTapped: PublishRelay<Void> { get }
+    
+    var successMessage: PublishRelay<String> { get }
+    var errorMessage: PublishRelay<String> { get }
+}
+
+final class RegisViewModel: RegisViewModelProtocol  {
     
     let name = BehaviorRelay<String>(value: "")
     let email = BehaviorRelay<String>(value: "")

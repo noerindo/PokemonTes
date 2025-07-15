@@ -10,7 +10,7 @@ import XLPagerTabStrip
 
 class MainTabViewController: ButtonBarPagerTabStripViewController {
     private lazy var homeVC = HomeViewController(viewModel: HomeViewModel())
-    private lazy var profileVC = ProfileViewController()
+    private lazy var profileVC = ProfileViewController(viewModel: ProfileViewModel())
     
     override func viewDidLoad() {
         super.viewDidLoad()

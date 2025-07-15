@@ -10,7 +10,18 @@ import RealmSwift
 import RxSwift
 import RxCocoa
 
-class ProfileViewModel {
+protocol ProfileViewModelProtocol {
+    var username: BehaviorRelay<String> { get }
+    var email: BehaviorRelay<String> { get }
+    var isLoading: PublishRelay<Bool> { get }
+    var didUpdateProfile: PublishRelay<Void> { get }
+    
+    func logout()
+    func updateProfile(username: String, email: String, password: String)
+    func getUserProfile() -> UserModel?
+}
+
+class ProfileViewModel: ProfileViewModelProtocol {
     
     let username = BehaviorRelay<String>(value: "")
     let email = BehaviorRelay<String>(value: "")

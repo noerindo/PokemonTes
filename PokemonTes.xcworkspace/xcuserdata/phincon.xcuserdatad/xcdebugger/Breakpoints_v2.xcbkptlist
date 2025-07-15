@@ -30,8 +30,8 @@
             filePath = "PokemonTes/Feature/Login/View/RegisViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "142"
-            endingLineNumber = "142"
+            startingLineNumber = "151"
+            endingLineNumber = "151"
             landmarkName = "bindViewModel()"
             landmarkType = "7">
          </BreakpointContent>
@@ -46,13 +46,13 @@
             filePath = "PokemonTes/Feature/Login/View/RegisViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "152"
-            endingLineNumber = "152"
+            startingLineNumber = "161"
+            endingLineNumber = "161"
             landmarkName = "bindViewModel()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "C07DF2CD-78A7-4A5B-9346-13B50CEB921D - c8227eff92c2c89e"
+                  uuid = "C07DF2CD-78A7-4A5B-9346-13B50CEB921D - c8227eff92c2c9a7"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -62,11 +62,11 @@
                   urlString = "file:///Users/phincon/Desktop/PokemonTes/PokemonTes/Feature/Login/View/RegisViewController.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "152"
-                  endingLineNumber = "152">
+                  startingLineNumber = "161"
+                  endingLineNumber = "161">
                </Location>
                <Location
-                  uuid = "C07DF2CD-78A7-4A5B-9346-13B50CEB921D - 2df0ce2a8ecc16d5"
+                  uuid = "C07DF2CD-78A7-4A5B-9346-13B50CEB921D - 2df0ce2a8ecc17ec"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
@@ -76,8 +76,8 @@
                   urlString = "file:///Users/phincon/Desktop/PokemonTes/PokemonTes/Feature/Login/View/RegisViewController.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "152"
-                  endingLineNumber = "152">
+                  startingLineNumber = "161"
+                  endingLineNumber = "161">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -220,8 +220,8 @@
             filePath = "PokemonTes/Feature/Login/View/LoginViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "161"
-            endingLineNumber = "161"
+            startingLineNumber = "171"
+            endingLineNumber = "171"
             landmarkName = "goToLogin()"
             landmarkType = "7">
          </BreakpointContent>
@@ -236,8 +236,8 @@
             filePath = "PokemonTes/Feature/Profile/View/ProfileViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "153"
-            endingLineNumber = "153"
+            startingLineNumber = "162"
+            endingLineNumber = "162"
             landmarkName = "bindViewModel()"
             landmarkType = "7">
          </BreakpointContent>

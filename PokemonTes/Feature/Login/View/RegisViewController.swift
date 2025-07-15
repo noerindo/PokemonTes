@@ -12,7 +12,7 @@ import MBProgressHUD
 
 class RegisViewController: UIViewController {
     
-    private let viewModel = RegisViewModel()
+    private let viewModel: RegisViewModelProtocol
     private let disposeBag = DisposeBag()
     
     private let pokeImage: UIImageView = {
@@ -61,6 +61,15 @@ class RegisViewController: UIViewController {
         button.contentEdgeInsets = UIEdgeInsets(top: 12, left: 24, bottom: 12, right: 24)
         return button
     }()
+    
+    init(viewModel: RegisViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
     
     override func viewDidLoad() {
         super.viewDidLoad()

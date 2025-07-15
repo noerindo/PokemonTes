@@ -14,7 +14,7 @@ import MBProgressHUD
 
 class ProfileViewController: UIViewController {
     
-    private let viewModel = ProfileViewModel()
+    private let viewModel: ProfileViewModelProtocol
     private let disposeBag = DisposeBag()
     
     private let imageView: UIImageView = {
@@ -77,6 +77,15 @@ class ProfileViewController: UIViewController {
         button.setTitleColor(.red, for: .normal)
         return button
     }()
+    
+    init(viewModel: ProfileViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -160,7 +169,7 @@ class ProfileViewController: UIViewController {
     
     @objc func didTapUpdate() {
         LoadingHUD.show(in: self.view, text: "Loading..")
-        let updateVC = UpdateViewController(viewModel: viewModel)
+        let updateVC = UpdateViewController(viewModel: viewModel as! ProfileViewModel)
         self.navigationController?.pushViewController(updateVC, animated: true)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             LoadingHUD.hide(from: self.view)

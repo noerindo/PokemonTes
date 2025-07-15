@@ -104,8 +104,8 @@ class HomeViewController: UIViewController {
         viewModel.loadCachedPokemonsIfAny()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewDidLayoutSubviews() {
+        view.layoutSkeletonIfNeeded()
         if shouldAnimation {
             shouldAnimation = false
             [titleLabel, subtitleLabel, toggleButton, searchBar, collectionView].forEach {
