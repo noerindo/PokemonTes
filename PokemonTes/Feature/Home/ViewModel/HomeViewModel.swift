@@ -46,6 +46,7 @@ final class HomeViewModel: HomeViewModelProtocol {
     
     init(apiService: GenerateApiProtocol = GenerateApiExt.shared) {
         self.apiService = apiService
+        fetchPokemon()
     }
     
     func fetchPokemon() {
