@@ -42,11 +42,7 @@ class DetailViewController: ButtonBarPagerTabStripViewController, UICollectionVi
         return stack
     }()
     
-    private let pokemonImage: UIImageView = {
-        let image = UIImageView()
-        image.contentMode = .scaleAspectFit
-        return image
-    }()
+    private let pokemonImage: UIImageView = UIImageView.imagePokemon()
     
     private let backButton: UIButton = {
         let button = UIButton()

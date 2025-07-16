@@ -13,11 +13,7 @@ class DetailTabViewController: UIViewController {
     
     private let viewModel: DetailTabViewItem
     
-    private let pokemonImage: UIImageView = {
-        let image =  UIImageView()
-        image.contentMode = .scaleAspectFit
-        return image
-    }()
+    private let pokemonImage: UIImageView = UIImageView.imagePokemon()
     
     private let stackView: UIStackView = {
         let stack = UIStackView()

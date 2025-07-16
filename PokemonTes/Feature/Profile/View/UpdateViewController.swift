@@ -16,34 +16,13 @@ class UpdateViewController: UIViewController {
     private let viewModel: ProfileViewModelProtocol
     private let disposeBag = DisposeBag()
     
-    private let imageView: UIImageView = {
-        let image = UIImageView()
-        image.image = UIImage(named: "pokeball")
-        image.contentMode = .scaleAspectFill
-        image.layer.cornerRadius = 40
-        image.clipsToBounds = true
-        return image
-    }()
+    private let imageView: UIImageView = UIImageView.imagePokemon()
     
-    private let usernameField: UITextField = {
-        let text = UITextField()
-        text.placeholder = "Username"
-        return text
-    }()
+    private let usernameField: UITextField = UITextField.inputFormField(placeholder: "Name")
     
-    private let emailField: UITextField = {
-        let text = UITextField()
-        text.placeholder = "Email"
-        return text
-    }()
+    private let emailField: UITextField = UITextField.inputFormField(placeholder: "Email")
     
-    private let passwordField: UITextField = {
-        let text = UITextField()
-        text.placeholder = "Password"
-        text.isSecureTextEntry = true
-        text.enablePasswordToggle()
-        return text
-    }()
+    private let passwordField: UITextField = UITextField.inputFormField(placeholder: "Password", isSecure: true)
     
     private let saveButton: UIButton = {
         let button = UIButton()

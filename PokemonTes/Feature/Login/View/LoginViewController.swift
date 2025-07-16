@@ -16,30 +16,11 @@ class LoginViewController: UIViewController {
     private let viewModel: LoginViewModelProtocol
     private let disposeBag = DisposeBag()
     
-    private let pokeImage: UIImageView = {
-        let image = UIImageView()
-        image.image = UIImage(named: "pokeball")
-        image.contentMode = .scaleAspectFit
-        return image
-    }()
+    private let pokeImage: UIImageView = UIImageView.imagePokemon()
     
-    private let emailTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Email"
-        textField.font = UIFont.boldSystemFont(ofSize: 15)
-        textField.borderStyle = .roundedRect
-        return textField
-    }()
+    private let emailTextField: UITextField  = UITextField.inputFormField(placeholder: "Email")
     
-    private let passwordTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Password"
-        textField.isSecureTextEntry = true
-        textField.font = UIFont.boldSystemFont(ofSize: 15)
-        textField.borderStyle = .roundedRect
-        textField.enablePasswordToggle()
-        return textField
-    }()
+    private let passwordTextField: UITextField = UITextField.inputFormField(placeholder: "Password", isSecure: true)
     
     private let loginButton: UIButton = {
         let button = UIButton(type: .system)
@@ -54,13 +35,7 @@ class LoginViewController: UIViewController {
         return button
     }()
     
-    private let infoLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Belum punya akun?"
-        label.font = UIFont.systemFont(ofSize: 15)
-        label.textColor = .black
-        return label
-    }()
+    private let infoLabel: UILabel =  UILabel.labelGeneral(text: "Belum punya akun?")
     
     private let regisButton: UIButton = {
         let button = UIButton(type: .system)

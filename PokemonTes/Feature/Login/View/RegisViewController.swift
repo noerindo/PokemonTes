@@ -15,39 +15,13 @@ class RegisViewController: UIViewController {
     private let viewModel: RegisViewModelProtocol
     private let disposeBag = DisposeBag()
     
-    private let pokeImage: UIImageView = {
-        let image = UIImageView()
-        image.image = UIImage(named: "pokeball")
-        image.contentMode = .scaleAspectFit
-        return image
-    }()
+    private let pokeImage: UIImageView = UIImageView.imagePokemon()
     
-    private let nameTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Name"
-        textField.font = UIFont.boldSystemFont(ofSize: 15)
-        textField.borderStyle = .roundedRect
-        return textField
-    }()
+    private let nameTextField: UITextField = UITextField.inputFormField(placeholder: "Name")
     
-    private let emailTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Email"
-        textField.font = UIFont.boldSystemFont(ofSize: 15)
-        textField.borderStyle = .roundedRect
-        return textField
-    }()
+    private let emailTextField: UITextField = UITextField.inputFormField(placeholder: "Email")
     
-    private let passwordTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Password"
-        textField.isSecureTextEntry = true
-        textField.font = UIFont.boldSystemFont(ofSize: 15)
-        textField.borderStyle = .roundedRect
-        textField.textContentType = .oneTimeCode
-        textField.enablePasswordToggle()
-        return textField
-    }()
+    private let passwordTextField: UITextField = UITextField.inputFormField(placeholder: "Password", isSecure: true)
     
     private let regisButton: UIButton = {
         let button = UIButton(type: .system)

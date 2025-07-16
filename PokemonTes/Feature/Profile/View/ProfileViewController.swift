@@ -17,40 +17,15 @@ class ProfileViewController: UIViewController {
     private let viewModel: ProfileViewModelProtocol
     private let disposeBag = DisposeBag()
     
-    private let imageView: UIImageView = {
-        let image = UIImageView()
-        image.contentMode = .scaleAspectFill
-        image.clipsToBounds = true
-        image.layer.cornerRadius = 40
-        image.image = UIImage(named: "pokeball")
-        return image
-    }()
+    private let imageView: UIImageView = UIImageView.imagePokemon()
     
-    private let nameTitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Nama:"
-        label.font = .systemFont(ofSize: 14, weight: .medium)
-        return label
-    }()
+    private let nameTitleLabel: UILabel = UILabel.labelGeneral(text: "Name")
     
-    private let emailTitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Email:"
-        label.font = .systemFont(ofSize: 14, weight: .medium)
-        return label
-    }()
+    private let emailTitleLabel: UILabel = UILabel.labelGeneral(text: "Email")
     
-    private let usernameLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 14)
-        return label
-    }()
+    private let usernameLabel: UILabel = UILabel.labelGeneral()
     
-    private let emailLabel: UILabel = {
-        let label = UILabel()
-        label.font = .systemFont(ofSize: 14)
-        return label
-    }()
+    private let emailLabel: UILabel =  UILabel.labelGeneral()
     
     private let containerView: UIView = {
         let view = UIView()

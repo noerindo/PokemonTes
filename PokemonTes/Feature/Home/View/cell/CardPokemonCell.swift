@@ -92,6 +92,7 @@ class CardPokemonCell: UICollectionViewCell {
     }
     
     private func setupStyle() {
+        
         contentView.clipsToBounds = false
         layer.cornerRadius = 12
         layer.shadowColor = UIColor.black.cgColor
