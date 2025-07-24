@@ -31,7 +31,8 @@ target 'PokemonTes' do
   target 'PokemonTesTests' do
     inherit! :search_paths
     
-
+rx
+pod 'RxTest'
   end
 
   target 'PokemonTesUITests' do
