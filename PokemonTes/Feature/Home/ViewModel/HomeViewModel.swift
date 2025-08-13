@@ -7,14 +7,13 @@
 
 import Foundation
 import UIKit
-import RxSwift
-import RxCocoa
+import Combine
 
 protocol HomeViewModelProtocol {
-    var pokemons: Observable<[Pokemon]> { get }
-    var isLoading: Observable<Bool> { get }
+    var pokemons: AnyPublisher<[Pokemon], Never> { get }
+    var isLoading: AnyPublisher<Bool, Never> { get }
     var isLoadingValue: Bool { get }
-    var errorMessage: Observable<String> { get }
+    var errorMessage: AnyPublisher<String, Never> { get }
     
     func fetchPokemon()
     func loadCachedPokemonsIfAny()
@@ -24,7 +23,7 @@ protocol HomeViewModelProtocol {
 final class HomeViewModel: HomeViewModelProtocol {
     
     private let apiService: GenerateApiProtocol
-    private let disposeBag = DisposeBag()
+    private var cancellables = Set<AnyCancellable>()
     
     private var offset = 0
     private let limit = 20
@@ -34,15 +33,15 @@ final class HomeViewModel: HomeViewModelProtocol {
     private var currentPokemons: [Pokemon] = []
     private let cacheKey = "Pokemons"
     
-    private let pokemonsRelay = BehaviorRelay<[Pokemon]>(value: [])
-    var pokemons: Observable<[Pokemon]> { pokemonsRelay.asObservable() }
+    private let pokemonsSubject = CurrentValueSubject<[Pokemon], Never>([])
+    var pokemons: AnyPublisher<[Pokemon], Never> { pokemonsSubject.eraseToAnyPublisher() }
     
-    private let loadingRelay = BehaviorRelay<Bool>(value: false)
-    var isLoading: Observable<Bool> { loadingRelay.asObservable() }
-    var isLoadingValue: Bool { loadingRelay.value }
+    private let loadingSubject = CurrentValueSubject<Bool, Never>(false)
+    var isLoading: AnyPublisher<Bool, Never> { loadingSubject.eraseToAnyPublisher() }
+    var isLoadingValue: Bool { loadingSubject.value }
     
-    private let errorRelay = PublishRelay<String>()
-    var errorMessage: Observable<String> { errorRelay.asObservable() }
+    private let errorSubject = PassthroughSubject<String, Never>()
+    var errorMessage: AnyPublisher<String, Never> { errorSubject.eraseToAnyPublisher() }
     
     init(apiService: GenerateApiProtocol = GenerateApiExt.shared) {
         self.apiService = apiService
@@ -51,7 +50,6 @@ final class HomeViewModel: HomeViewModelProtocol {
     
     func fetchPokemon() {
         guard !isLoadingValue else { return }
-        
         setLoading(true)
         
         guard NetworkUtils.isConnected else {
@@ -59,21 +57,18 @@ final class HomeViewModel: HomeViewModelProtocol {
             return
         }
         
-        let request: Single<PokemonsModel> = isFirstLoad
-        ? apiService.getPokemons()
-        : apiService.getMorePokemon(offset: offset)
-        
+        let request: AnyPublisher<PokemonsModel, Error> = isFirstLoad
+        ? apiService.getPokemons() : apiService.getMorePokemon(offset: offset)
         request
-            .observe(on: MainScheduler.instance)
-            .subscribe(
-                onSuccess: { [weak self] result in
-                    self?.handleSuccess(result.pokemons)
-                },
-                onFailure: { [weak self] error in
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] completion in
+                if case .failure(let error) = completion {
                     self?.handleError(error)
                 }
-            )
-            .disposed(by: disposeBag)
+            }, receiveValue: { [weak self] result in
+                self?.handleSuccess(result.pokemons)
+            })
+            .store(in: &cancellables)
     }
     
     func didSelectPokemon(_ pokemon: Pokemon, completion: @escaping (DetailPokemonModel?) -> Void) {
@@ -83,26 +78,28 @@ final class HomeViewModel: HomeViewModelProtocol {
         }
         
         apiService.getDetailPokemon(url: url)
-            .observe(on: MainScheduler.instance)
-            .subscribe(onSuccess: { detail in
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] completionSink in
+                if case .failure(let error) = completionSink {
+                    self?.errorSubject.send(error.localizedDescription)
+                    completion(nil)
+                }
+            }, receiveValue: { detail in
                 completion(detail)
-            }, onFailure: { [weak self] error in
-                self?.errorRelay.accept(error.localizedDescription)
-                completion(nil)
             })
-            .disposed(by: disposeBag)
+            .store(in: &cancellables)
     }
     
     func loadCachedPokemonsIfAny() {
         let cached = loadPokemonsFromCache()
         guard !cached.isEmpty else { return }
         currentPokemons = cached
-        pokemonsRelay.accept(cached)
+        pokemonsSubject.send(cached)
     }
     
     private func useCachedData() {
         currentPokemons = loadPokemonsFromCache()
-        pokemonsRelay.accept(currentPokemons)
+        pokemonsSubject.send(currentPokemons)
         setLoading(false)
     }
     
@@ -115,7 +112,7 @@ final class HomeViewModel: HomeViewModelProtocol {
         }
         
         offset = currentPokemons.count
-        pokemonsRelay.accept(currentPokemons)
+        pokemonsSubject.send(currentPokemons)
         savePokemonsToCache(Array(currentPokemons.prefix(10)))
         setLoading(false)
     }
@@ -123,11 +120,11 @@ final class HomeViewModel: HomeViewModelProtocol {
     private func handleError(_ error: Error) {
         setLoading(false)
         let message = error.localizedDescription.isEmpty ? "Unknown error" : error.localizedDescription
-        errorRelay.accept(message)
+        errorSubject.send(message)
     }
     
     private func setLoading(_ value: Bool) {
-        loadingRelay.accept(value)
+        loadingSubject.send(value)
     }
     
     private func savePokemonsToCache(_ pokemons: [Pokemon]) {

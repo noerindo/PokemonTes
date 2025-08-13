@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import RxSwift
+import Combine
 import SkeletonView
 import SnapKit
 import XLPagerTabStrip
@@ -15,7 +15,7 @@ import MBProgressHUD
 class HomeViewController: UIViewController {
     
     private var viewModel: HomeViewModelProtocol
-    private let disposeBag = DisposeBag()
+    private var cancellables = Set<AnyCancellable>()
     
     private var pokemons: [Pokemon] = []
     private var imageLoadCounter = 0
@@ -88,7 +88,7 @@ class HomeViewController: UIViewController {
         self.navigationItem.hidesBackButton = true
         setupViews()
         setupLayout()
-        configObservable()
+        bindViewModel()
         
         searchBar.delegate = self
         collectionView.delegate = self
@@ -200,43 +200,34 @@ class HomeViewController: UIViewController {
         collectionView.setCollectionViewLayout(layout, animated: true)
     }
     
-    private func configObservable() {
+    private func bindViewModel() {
         viewModel.pokemons
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] data in
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { completion in
+                if case let .failure(error) = completion {
+                    print("Error: \(error)")
+                }
+            }, receiveValue: { [weak self] data in
                 guard let self = self else { return }
-                
                 self.pokemons = data
                 self.filteredPokemons = []
                 self.searchActive = false
                 self.collectionView.reloadData()
-                
-                self.collectionView.stopSkeletonAnimation()
-                [self.titleLabel, self.subtitleLabel, self.toggleButton, self.searchBar, self.collectionView].forEach {
-                    $0.hideSkeleton()
-                }
-                
                 self.isFetchingMore = false
             })
-            .disposed(by: disposeBag)
+            .store(in: &cancellables)
         
         viewModel.isLoading
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { isLoading in
-            })
-            .disposed(by: disposeBag)
-        
-        viewModel.isLoading
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] isLoading in
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isLoading in
                 guard let self = self else { return }
                 if isLoading {
                     LoadingHUD.show(in: self.view, text: "Loading...")
                 } else {
                     LoadingHUD.hide(from: self.view)
                 }
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &cancellables)
     }
     
     private func filterPokemons(with query: String) {

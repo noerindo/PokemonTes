@@ -7,12 +7,12 @@
 
 import Foundation
 import Alamofire
-import RxSwift
+import Combine
 
 protocol GenerateApiProtocol {
-    func getPokemons() -> Single<PokemonsModel>
-    func getMorePokemon(offset: Int) -> Single<PokemonsModel>
-    func getDetailPokemon(url: String) -> Single<DetailPokemonModel>
+    func getPokemons() -> AnyPublisher<PokemonsModel, Error>
+    func getMorePokemon(offset: Int) -> AnyPublisher<PokemonsModel, Error>
+    func getDetailPokemon(url: String) -> AnyPublisher<DetailPokemonModel, Error>
 }
 
 struct ConfigAPI {
@@ -51,74 +51,44 @@ public class GenerateApiExt: GenerateApiProtocol {
     private init() {}
     
     // MARK: - Get Pokémons List
-    func getPokemons() -> Single<PokemonsModel> {
-        return Single.create { single in
-            let endpoint = endPointAPI.getFullURL(for: .pokemons)
-            
-            let request = AF.request(endpoint, method: .get)
-                .validate()
-                .responseData { response in
-                    switch response.result {
-                    case .success(let data):
-                        do {
-                            let decoded = try JSONDecoder().decode(PokemonsModel.self, from: data)
-                            single(.success(decoded))
-                        } catch {
-                            single(.failure(error))
-                        }
-                    case .failure(let error):
-                        single(.failure(error))
-                    }
+    func getPokemons() -> AnyPublisher<PokemonsModel, Error> {
+        let endpoint = endPointAPI.getFullURL(for: .pokemons)
+        return AF.request(endpoint)
+            .publishData()
+            .tryMap { output in
+                guard let data = output.data else {
+                    throw URLError(.badServerResponse)
                 }
-            
-            return Disposables.create { request.cancel() }
-        }
+                return try JSONDecoder().decode(PokemonsModel.self, from: data)
+            }
+            .eraseToAnyPublisher()
     }
     
     // MARK: - Get more Pokémons List
-    func getMorePokemon(offset: Int) -> Single<PokemonsModel> {
-        return Single.create { single in
-            let endpoint = endPointAPI.getFullURL(for: .morePoke(offset: offset, limit: 10))
-            let request = AF.request(endpoint, method: .get)
-                .validate()
-                .responseData { response in
-                    switch response.result {
-                    case .success(let data):
-                        do {
-                            let decoded = try JSONDecoder().decode(PokemonsModel.self, from: data)
-                            single(.success(decoded))
-                        } catch {
-                            single(.failure(error))
-                        }
-                    case .failure(let error):
-                        single(.failure(error))
-                    }
+    func getMorePokemon(offset: Int) -> AnyPublisher<PokemonsModel, Error> {
+        let endpoint = endPointAPI.getFullURL(for: .morePoke(offset: offset, limit: 10))
+        return AF.request(endpoint)
+            .publishData()
+            .tryMap { output in
+                guard let data = output.data else {
+                    throw URLError(.badServerResponse)
                 }
-            return Disposables.create { request.cancel() }
-            
-        }
+                return try JSONDecoder().decode(PokemonsModel.self, from: data)
+            }
+            .eraseToAnyPublisher()
     }
     
     // MARK: - Get Pokémon Detail
-    func getDetailPokemon(url: String) -> Single<DetailPokemonModel> {
-        return Single.create { single in
-            let request = AF.request(url, method: .get)
-                .validate(statusCode: 200..<300)
-                .responseData { response in
-                    switch response.result {
-                    case .success(let data):
-                        do {
-                            let decoded = try JSONDecoder().decode(DetailPokemonModel.self, from: data)
-                            single(.success(decoded))
-                        } catch {
-                            single(.failure(error))
-                        }
-                    case .failure(let error):
-                        single(.failure(error))
-                    }
+    func getDetailPokemon(url: String) -> AnyPublisher<DetailPokemonModel, Error> {
+        return AF.request(url)
+            .publishData()
+            .tryMap { output in
+                guard let data = output.data else {
+                    throw URLError(.badServerResponse)
                 }
-            
-            return Disposables.create { request.cancel() }
-        }
+                return try JSONDecoder().decode(DetailPokemonModel.self, from: data)
+            }
+            .eraseToAnyPublisher()
     }
+    
 }
